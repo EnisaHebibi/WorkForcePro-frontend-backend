@@ -1,6 +1,14 @@
 const jsonServer = require("json-server");
 const server = jsonServer.create();
 const jsonServerPort = 8095;
+const middlewares = jsonServer.defaults();
+
+server.use(jsonServer.bodyParser);
+server.use(middlewares);
+
+const departmentsRoute = require("./routes/departments");
+
+departmentsRoute(server);
 
 server.listen(jsonServerPort, () => {
   console.log(
