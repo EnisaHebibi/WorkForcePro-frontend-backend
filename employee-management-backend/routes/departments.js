@@ -1,3 +1,5 @@
+const { request, response } = require("express");
+
 module.exports = function (server) {
   const { readLastUsedDepartmentId } = require("../utils");
 
@@ -57,5 +59,59 @@ module.exports = function (server) {
         response.json(departmentData[index]);
       }
     }
+  });
+
+  //Endpoint -gell all departments
+
+  server.get("/api/departments/all", (request, response) => {
+    const departmentData = router.db.get("departments").value();
+    response.status(200).json(departmentData);
+  });
+
+  //Endpoint- fetch department by Id
+
+  server.get("/api/departments/:id", (request, response) => {
+    const departmentId = parseInt(request.params.id);
+    // console.log(departmentId);
+    const departmentData = router.db.get("departments").value();
+
+    const department = departmentData.find((dept) => dept.id === departmentId);
+
+    if (!department) {
+      return response.status(404).json({ message: "Department not found!" });
+    } else {
+      response.status(200).json(department);
+    }
+  });
+
+  //Endpoint-delete department by id
+
+  server.delete("/api/department/delete/:id", (request, response) => {
+    const departmentId = parseInt(request.params.id);
+    const departmentData = router.db.get("departments").value();
+    const departmentIndex = departmentData.findIndex(
+      (dept) => dept.id === departmentId
+    );
+
+    if (departmentIndex === -1) {
+      return response.status(404).json({ message: "Department not found!" });
+    }
+
+    const department = departmentData[departmentIndex];
+
+    if (department.employee_list.length > 0) {
+      return response
+        .status(400)
+        .json({ message: "Cannot delete this department with employees!" });
+    }
+
+    const updateDepartments = departmentData.filter(
+      (dept) => dept.id !== departmentId
+    );
+
+    router.db.set("departments", updateDepartments).write();
+    response.json({
+      message: `Department with ${departmentId} deleted successfully!`,
+    });
   });
 };
