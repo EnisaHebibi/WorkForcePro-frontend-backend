@@ -110,4 +110,36 @@ module.exports = function (server) {
         : response.status(404).json({ message: "Employee not found" });
     }
   });
+
+  //Endpoint - delete employee by id:
+
+  server.delete("/api/employee/delete/:id", (request, response) => {
+    const employeeId = parseInt(request.params.id);
+    const departmentsData = router.db.get("departments").value();
+
+    let employeeDeleted = false;
+
+    departmentsData.forEach((department) => {
+      const employeeIndex = department.employee_list.findIndex(
+        (empl) => empl.id === employeeId
+      );
+
+      if (employeeIndex !== -1) {
+        department = department.employee_list.splice(employeeIndex, 1);
+        employeeDeleted = true;
+      }
+    });
+
+    if (employeeDeleted) {
+      router.db.set("departments", departmentsData).write();
+      return response.json({
+        message: "Employee deleted successfully",
+        departmentsData,
+      });
+    } else {
+      response
+        .status(404)
+        .json({ message: "Employee not found in any department" });
+    }
+  });
 };
