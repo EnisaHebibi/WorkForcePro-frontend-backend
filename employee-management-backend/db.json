@@ -12,6 +12,13 @@
           "phone": "12345678"
         },
         {
+          "id": 2,
+          "name": "Amet Ameti",
+          "address": "Rr. Deshmoret e Kombit",
+          "email": "amet@gmail.com",
+          "phone": "12345678"
+        },
+        {
           "id": 3,
           "name": "Armend Rexhepiii",
           "address": "Rr. Deshmoret e Kombit",
