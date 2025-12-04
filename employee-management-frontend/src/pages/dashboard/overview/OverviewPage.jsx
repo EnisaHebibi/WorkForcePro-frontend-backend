@@ -1,5 +1,6 @@
 import Header from "../../../components/shared/dashboard/Header";
 import CreateDepartmentDialog from "../../../components/shared/dashboard/overview/department/CreateDepartmentDialog";
+import DepartmentsList from "../../../components/shared/dashboard/overview/department/DepartmentsList";
 import Stats from "../../../components/shared/dashboard/overview/stats/Stats";
 import Layout from "../Layout";
 
@@ -15,7 +16,7 @@ const OverviewPage = () => {
 
       <Stats />
 
-      {/* {DEPARTMENTS LIST} */}
+      <DepartmentsList />
     </Layout>
   );
 };
