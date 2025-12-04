@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import OverviewPage from "./pages/dashboard/overview/OverviewPage";
 import EmployeesPage from "./pages/dashboard/employees/EmployeesPage";
 import EditDepartmentPage from "./pages/dashboard/overview/EditDepartmentPage";
+import TaskPage from "./pages/dashboard/tasks/TaskPage";
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
         ></Route>
 
         <Route path="/employees" element={<EmployeesPage />}></Route>
+
+        <Route path="/tasks" element={<TaskPage />}></Route>
       </Routes>
       <Toaster richColors closeButton />
     </Router>
