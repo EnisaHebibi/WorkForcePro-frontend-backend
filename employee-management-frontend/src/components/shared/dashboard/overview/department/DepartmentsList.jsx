@@ -20,11 +20,13 @@ import {
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Pencil, Trash } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const DepartmentsList = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [listView, setListView] = useState(false);
+  const [listView, setListView] = useState(true);
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -88,6 +90,17 @@ const DepartmentsList = () => {
                 <TableRow key={department.id}>
                   <TableCell>{department.name}</TableCell>
                   <TableCell>{department.employee_list.length || 0}</TableCell>
+                  <TableCell className="flex gap-2 justify-end">
+                    <Button variant="outline" size="icon" asChild>
+                      <Link to={`/edit-department/${department.id}`}>
+                        <Pencil />
+                      </Link>
+                    </Button>
+
+                    <Button variant="destructive">
+                      <Trash />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -101,10 +114,21 @@ const DepartmentsList = () => {
                   <CardTitle>{department.name}</CardTitle>
                 </CardHeader>
 
-                <CardFooter>
+                <CardFooter className="justify-between">
                   <CardDescription>
-                    {department.employee_list.length || 0}
+                    Employees: {department.employee_list.length || 0}
                   </CardDescription>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon" asChild>
+                      <Link to={`/edit-department/${department.id}`}>
+                        <Pencil />
+                      </Link>
+                    </Button>
+
+                    <Button variant="destructive">
+                      <Trash />
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             ))}

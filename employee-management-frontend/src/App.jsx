@@ -6,6 +6,7 @@ import LoginPage from "./pages/auth/Loginpage";
 import { Toaster } from "sonner";
 import OverviewPage from "./pages/dashboard/overview/OverviewPage";
 import EmployeesPage from "./pages/dashboard/employees/EmployeesPage";
+import EditDepartmentPage from "./pages/dashboard/overview/EditDepartmentPage";
 
 function App() {
   return (
@@ -17,9 +18,14 @@ function App() {
 
         {/* {private Route} */}
         <Route path="/overview" element={<OverviewPage />}></Route>
+        <Route
+          path="/edit-department/:id"
+          element={<EditDepartmentPage />}
+        ></Route>
+
         <Route path="/employees" element={<EmployeesPage />}></Route>
       </Routes>
-      <Toaster />
+      <Toaster richColors closeButton />
     </Router>
   );
 }

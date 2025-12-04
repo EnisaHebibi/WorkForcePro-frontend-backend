@@ -49,7 +49,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel>Username</FieldLabel>
+            <FieldLabel htmlFor="register-username">Username</FieldLabel>
             <Input
               {...field}
               aria-invalid={fieldState.invalid}
@@ -65,7 +65,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel>Email</FieldLabel>
+            <FieldLabel htmlFor="register-email">Email</FieldLabel>
             <Input
               {...field}
               aria-invalid={fieldState.invalid}
@@ -81,7 +81,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel>Password</FieldLabel>
+            <FieldLabel htmlFor="register-password">Password</FieldLabel>
             <Input
               type="password"
               {...field}
@@ -98,7 +98,9 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel>Confirm password</FieldLabel>
+            <FieldLabel htmlFor="register-password">
+              Confirm password
+            </FieldLabel>
             <Input
               type="password"
               {...field}
@@ -110,7 +112,9 @@ const RegisterForm = () => {
         )}
       />
 
-      <Button type="submit">Login</Button>
+      <Button type="submit" form="registerForm">
+        Login
+      </Button>
     </form>
   );
 };

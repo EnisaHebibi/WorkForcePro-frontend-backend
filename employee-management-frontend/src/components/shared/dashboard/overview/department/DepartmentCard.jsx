@@ -1,3 +1,14 @@
+import * as z from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardTitle,
+  CardHeader,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,9 +35,9 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import z from "zod";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { da } from "zod/v4/locales";
 
 const formSchema = z.object({
   name: z
@@ -34,7 +45,7 @@ const formSchema = z.object({
     .min(2, { error: "Department name must have at least 2 characters." }),
 });
 
-const CreateDepartmentDialog = () => {
+const DepartmentCard = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,39 +53,31 @@ const CreateDepartmentDialog = () => {
     },
   });
 
-  function onSubmit(data) {
-    toast("Succesfully✅");
-  }
+  const onSubmit = (data) => {
+    console.log(data);
+    toast.success("Succesfully✅");
+  };
 
   return (
-    <Dialog>
-      <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogTrigger asChild>
-          <Button>
-            <Plus />
-            Create new Department
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Create new Deparmtment</DialogTitle>
-            <DialogDescription>
-              Provide department details that you want to create.
-            </DialogDescription>
-          </DialogHeader>
-
+    <Card className={"lg:w-96 w-full"}>
+      <CardHeader>
+        <CardTitle>Edit Department</CardTitle>
+        <CardDescription>Update the Department's name</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form id="department-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="name"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-demo-title">
+                  <FieldLabel htmlFor="department-form-title">
                     Department name
                   </FieldLabel>
                   <Input
                     {...field}
-                    id="form-rhf-demo-title"
+                    id="department-form-title"
                     aria-invalid={fieldState.invalid}
                     placeholder="Department name"
                   />
@@ -85,18 +88,17 @@ const CreateDepartmentDialog = () => {
               )}
             />
           </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit" form="form-rhf-demo">
-              Create
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Field orientation="horizontal">
+          <Button type="submit" form="department-form">
+            Submit
+          </Button>
+        </Field>
+      </CardFooter>
+    </Card>
   );
 };
 
-export default CreateDepartmentDialog;
+export default DepartmentCard;
