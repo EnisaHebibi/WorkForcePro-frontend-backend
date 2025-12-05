@@ -13,7 +13,7 @@ app.use(cors({ origin: process.env.DOMAIN }));
 app.use(express.json());
 
 //use routes
-app.use("/api.auth", authRoutes); //when we request we will have http://localhost:8095/api/auth
+app.use("/api/auth", authRoutes); //when we request we will have http://localhost:8095/api/auth
 
 const PORT = process.env.PORT || 8095;
 
