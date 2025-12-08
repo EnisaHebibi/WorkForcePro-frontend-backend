@@ -20,21 +20,33 @@ const formSchema = z
       .min(6, { error: "Password must be at least 6 characters long." }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: "Passwordt don't match!",
+    error: "Password don't match!",
     path: ["confirmPassword"],
   });
 
 const RegisterForm = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   function onSubmit(data) {
-    toast("Succesfully✅");
+    console.log(data);
+    toast("Successfully✅");
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="w-96 space-y-2">
+    <form
+      id
+      registerForm
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="w-96 space-y-2"
+    >
       <div>
         <h1 className="text-primary font-bold text-2xl mb-1">
           Create an account
@@ -49,7 +61,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="register-username">Username</FieldLabel>
+            <FieldLabel>Username</FieldLabel>
             <Input
               {...field}
               aria-invalid={fieldState.invalid}
@@ -65,7 +77,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="register-email">Email</FieldLabel>
+            <FieldLabel>Email</FieldLabel>
             <Input
               {...field}
               aria-invalid={fieldState.invalid}
@@ -81,7 +93,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="register-password">Password</FieldLabel>
+            <FieldLabel>Password</FieldLabel>
             <Input
               type="password"
               {...field}
@@ -98,9 +110,7 @@ const RegisterForm = () => {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="register-password">
-              Confirm password
-            </FieldLabel>
+            <FieldLabel>Confirm password</FieldLabel>
             <Input
               type="password"
               {...field}
@@ -112,9 +122,7 @@ const RegisterForm = () => {
         )}
       />
 
-      <Button type="submit" form="registerForm">
-        Login
-      </Button>
+      <Button type="submit">Register</Button>
     </form>
   );
 };

@@ -16,9 +16,14 @@ const formSchema = z.object({
 const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   function onSubmit(data) {
+    console.log(data);
     toast("Succesfully✅");
   }
 
