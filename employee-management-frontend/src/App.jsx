@@ -8,6 +8,7 @@ import OverviewPage from "./pages/dashboard/overview/OverviewPage";
 import EmployeesPage from "./pages/dashboard/employees/EmployeesPage";
 import EditDepartmentPage from "./pages/dashboard/overview/EditDepartmentPage";
 import TaskPage from "./pages/dashboard/tasks/TaskPage";
+import PrivateRoute from "./lib/PrivateRoute";
 
 function App() {
   return (
@@ -17,8 +18,14 @@ function App() {
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/register" element={<RegisterPage />}></Route>
 
-        {/* {private Route} */}
-        <Route path="/overview" element={<OverviewPage />}></Route>
+        <Route
+          path="/overview"
+          element={
+            <PrivateRoute>
+              <OverviewPage />
+            </PrivateRoute>
+          }
+        ></Route>
         <Route
           path="/edit-department/:id"
           element={<EditDepartmentPage />}

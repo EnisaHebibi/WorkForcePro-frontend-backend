@@ -5,6 +5,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/authSlice";
+import { useNavigate } from "react-router";
 
 const formSchema = z.object({
   email: z.email(),
@@ -14,6 +17,8 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -22,10 +27,36 @@ const LoginForm = () => {
     },
   });
 
-  function onSubmit(data) {
-    console.log(data);
-    toast("Succesfully✅");
-  }
+  const onSubmit = async (data) => {
+    try {
+      const result = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!result.ok) {
+        const errorData = await result.json();
+        throw new Error(errorData.message || "Failed to log in.");
+      }
+
+      const responseData = await result.json();
+
+      localStorage.setItem("token", responseData.token);
+      localStorage.setItem("user", JSON.stringify(responseData.user));
+
+      dispatch(login(responseData.user));
+      navigate("/overview");
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
+  };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="w-96 space-y-2">

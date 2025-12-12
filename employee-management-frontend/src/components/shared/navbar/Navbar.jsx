@@ -1,5 +1,6 @@
 import Logo from "@/assets/img/DarkWorkForceProLogo.svg";
 import { Link, NavLink } from "react-router";
+import DropDownAvatar from "./DropDownAvatar";
 
 const Navbar = () => {
   const navLinks = [
@@ -30,6 +31,7 @@ const Navbar = () => {
           </li>
         ))}
       </ul>
+      <DropDownAvatar />
     </nav>
   );
 };
