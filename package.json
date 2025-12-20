@@ -16,8 +16,8 @@
     "url": "https://github.com/EnisaHebibi/WorkForcePro-frontend-backend/issues"
   },
   "homepage": "https://github.com/EnisaHebibi/WorkForcePro-frontend-backend#readme",
-  "description": "",
   "dependencies": {
     "concurrently": "^9.2.1"
-  }
+  },
+  "description": ""
 }

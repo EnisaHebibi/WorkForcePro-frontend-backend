@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z
   .object({
@@ -25,6 +26,7 @@ const formSchema = z
   });
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,18 +37,37 @@ const RegisterForm = () => {
     },
   });
 
-  function onSubmit(data) {
-    console.log(data);
-    toast("Successfully✅");
-  }
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to register.");
+      }
+
+      toast.success("Account Created!", {
+        description: "You have been registered successfullt. Please log in.",
+      });
+
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message || "Failed to register");
+    }
+  };
 
   return (
-    <form
-      id
-      registerForm
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="w-96 space-y-2"
-    >
+    <form onSubmit={form.handleSubmit(onSubmit)} className="w-96 space-y-2">
       <div>
         <h1 className="text-primary font-bold text-2xl mb-1">
           Create an account
