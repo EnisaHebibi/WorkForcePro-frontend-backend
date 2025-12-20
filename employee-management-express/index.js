@@ -6,6 +6,7 @@ dotenv.config();
 
 //routes
 const authRoutes = require("./routes/auth");
+const departmentsRoutes = require("./routes/departments");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 
 //use routes
 app.use("/api/auth", authRoutes); //when we request we will have http://localhost:8095/api/auth
+app.use("/api/departments", departmentsRoutes); //when we request we will have http://localhost:8095/api/departments
 
 const PORT = process.env.PORT || 8095;
 
