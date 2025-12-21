@@ -92,6 +92,40 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+//Endpoint to get department by id
+
+router.get("/:id", authMiddleware, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Bad request. Department id is required!" });
+    }
+
+    const query = `
+        SELECT
+        d.id,
+        d.name,
+        COUNT (ud.user_id) AS employee_count
+        FROM departments d
+        LEFT JOIN users_departments ud ON d.id=ud.department_id
+        WHERE d.id=$1
+        GROUP BY d.id
+        `;
+
+    const result = await pool.query(query, [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Department not found!" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 //Endpoint to delete department
 
 router.delete("/:id", authMiddleware, async (req, res) => {
@@ -110,7 +144,38 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   const query = "DELETE FROM departments WHERE id=$1 RETURNING *";
   const result = await pool.query(query, [id]);
 
+  if (result.rowCount === 0) {
+    return res.status(404).json({ message: "Department not found!" });
+  }
+
   res.status(200).json({ message: "Department deleted successfully." });
+});
+
+//Endpoint to update department by id
+
+router.put("/:id", authMiddleware, async (req, res) => {
+  const { name } = req.body;
+  const { id } = req.params;
+
+  if (req.user.status !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only!" });
+  }
+
+  if (!id || !name || name.lenght <= 2) {
+    return res.status(400).json({
+      message:
+        "id is required, name is required, and name must be longer than 2 characters!",
+    });
+  }
+
+  const query = `UPDATE departments SET name=$1 WHERE id=$2 RETURNING *`;
+  const result = await pool.query(query, [name, id]);
+
+  if (result.rowCount === 0) {
+    return res.status(404).json({ message: "Department not found!" });
+  }
+
+  res.status(200).json(result.rows[0]);
 });
 
 module.exports = router;
