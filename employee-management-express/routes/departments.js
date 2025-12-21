@@ -4,6 +4,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
+//endpoint to create department
 router.post("/", authMiddleware, async (req, res) => {
   const { name } = req.body;
 
@@ -35,6 +36,7 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+//endpoint to assign user to a department
 router.post("/assign", authMiddleware, async (req, res) => {
   const { user_id, department_id } = req.body;
 
@@ -53,11 +55,62 @@ router.post("/assign", authMiddleware, async (req, res) => {
     const query =
       "INSERT INTO users_departments (user_id, department_id) VALUES ($1, $2) RETURNING *";
     const result = await pool.query(query, [user_id, department_id]);
+
+    res.status(201).json({
+      success: true,
+      message: "User assigned to department successfully",
+      data: result.rows[0],
+    });
   } catch (error) {
     res
       .status(500)
       .json({ success: false, message: error.message, data: null });
   }
+});
+
+//endpoint to get all departments
+
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const query = `
+        SELECT
+        d.id,
+        d.name,
+        COUNT (ud.user_id) AS employee_count
+        FROM departments d
+        LEFT JOIN users_departments ud ON d.id=ud.department_id
+        GROUP BY d.id
+        ORDER BY d.id ASC
+        `;
+
+    const result = await pool.query(query);
+    res.json(result.rows);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error.message, data: null });
+  }
+});
+
+//Endpoint to delete department
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ message: "Bad request. Department id is required!" });
+  }
+
+  if (req.user.status !== "admin") {
+    return res.status(403).json({ message: "Messsage denied. Admin only!" });
+  }
+
+  const query = "DELETE FROM departments WHERE id=$1 RETURNING *";
+  const result = await pool.query(query, [id]);
+
+  res.status(200).json({ message: "Department deleted successfully." });
 });
 
 module.exports = router;
