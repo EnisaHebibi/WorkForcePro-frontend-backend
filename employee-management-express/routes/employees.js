@@ -60,4 +60,57 @@ router.get("/department/:department_id", authMiddleware, async (req, res) => {
   }
 });
 
+//Endpoint update user department
+
+router.put("/update-department", authMiddleware, async (req, res) => {
+  const { user_id, department_id } = req.body;
+
+  try {
+    if (req.user.status !== "admin") {
+      return res.status(403).json({ message: "Access denied. Admins only" });
+    }
+
+    const departmentCheckQuery = `SELECT id FROM departments WHERE id=$1;`;
+    const departmentCheck = await pool.query(departmentCheckQuery, [
+      department_id,
+    ]);
+
+    if (departmentCheck.rowCount === 0) {
+      return res.status(404).json({ message: "Department not found" });
+    }
+
+    const updateDepartmentQuery = `UPDATE users_departments SET department_id=$1 WHERE user_id=$2 RETURNING *;`;
+    const result = await pool.query(updateDepartmentQuery, [
+      department_id,
+      user_id,
+    ]);
+
+    if (result.rowCount === 0) {
+      const assignDepartmentQuery = `INSERT INTO users_departments (user_id,department_id) VALUES ($1,$2);`;
+      const result = await pool.query(assignDepartmentQuery, [
+        user_id,
+        department_id,
+      ]);
+
+      if (result.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ message: "User or department not found!" });
+      }
+
+      return res.status(201).json({
+        message: "Department assigned successfully",
+        data: result.rows[0],
+      });
+    }
+
+    res.status(201).json({
+      message: "Department assigned successfully",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
