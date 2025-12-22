@@ -84,7 +84,7 @@ router.get("/", authMiddleware, async (req, res) => {
         `;
 
     const result = await pool.query(query);
-    res.json(result.rows);
+    res.status(200).json(result.rows);
   } catch (error) {
     res
       .status(500)
