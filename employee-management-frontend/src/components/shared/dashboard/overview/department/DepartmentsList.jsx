@@ -20,35 +20,34 @@ import {
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash } from "lucide-react";
+import { LayoutDashboard, List, Pencil } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDepartments } from "@/store/departmentsSlice";
+import DeleteButton from "./DeleteButton";
+import { DataTable } from "@/components/shared/dataTable/data-table";
+import { columns } from "./columns";
 
 const DepartmentsList = () => {
-  const [departments, setDepartments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { departments, loading, error } = useSelector(
+    (state) => state.departments
+  );
   const [listView, setListView] = useState(true);
 
   useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          "http://localhost:8095/api/departments/all"
-        );
-        const data = await response.json();
+    dispatch(fetchDepartments());
+  }, [dispatch]);
 
-        setDepartments(data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDepartments();
-  }, []);
-
+  const handleDepartmentDelete = () => {
+    dispatch(fetchDepartments());
+  };
   if (loading) {
     return <h1>Fetching data....</h1>;
+  }
+
+  if (departments.error) {
+    return <h1 className="text-red-500">Error: {error}</h1>;
   }
 
   if (departments.length === 0) {
@@ -56,56 +55,61 @@ const DepartmentsList = () => {
   }
 
   return (
-    <div className="mt-10 ">
-      <div className="flex justify-between">
-        <h1 className="text-left">List of all departments:</h1>
-        <div className="flex gap-2 mb-5">
-          <Button
-            variant={listView ? "default" : "outline"}
-            onClick={() => setListView(true)}
-          >
-            List
-          </Button>
-          <Button
-            variant={listView ? "outline" : "default"}
-            onClick={() => setListView(false)}
-          >
-            Card
-          </Button>
-        </div>
+    <div className="w-full mt-8 ">
+      {/*Switch*/}
+      <div className="w-fit ml-auto mb-8 gap-2 flex">
+        <Button
+          variant={listView ? "default" : "outline"}
+          onClick={() => setListView(true)}
+        >
+          <List />
+        </Button>
+        <Button
+          variant={listView ? "outline" : "default"}
+          onClick={() => setListView(false)}
+        >
+          <LayoutDashboard />
+        </Button>
       </div>
+
       {listView ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Employees</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {departments.length > 0 &&
-              departments?.map((department) => (
-                <TableRow key={department.id}>
-                  <TableCell>{department.name}</TableCell>
-                  <TableCell>{department.employee_list.length || 0}</TableCell>
-                  <TableCell className="flex gap-2 justify-end">
-                    <Button variant="outline" size="icon" asChild>
-                      <Link to={`/edit-department/${department.id}`}>
-                        <Pencil />
-                      </Link>
-                    </Button>
-
-                    <Button variant="destructive">
-                      <Trash />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <DataTable columns={columns} data={departments} />
       ) : (
+        // <Table>
+        //   <TableHeader>
+        //     <TableRow>
+        //       <TableHead>Name</TableHead>
+        //       <TableHead>Employees</TableHead>
+        //       <TableHead className="text-right">Actions</TableHead>
+        //     </TableRow>
+        //   </TableHeader>
+
+        //   <TableBody>
+        //     {departments.length > 0 &&
+        //       departments?.map((department) => (
+        //         <TableRow key={department.id}>
+        //           <TableCell>{department.name}</TableCell>
+
+        //           <TableCell>{department?.employee_count || 0}</TableCell>
+        //           <TableCell className="flex gap-2 justify-end">
+        //             <Button variant="outline" size="icon" asChild>
+        //               <Link to={`/edit-department/${department.id}`}>
+        //                 <Pencil />
+        //               </Link>
+        //             </Button>
+
+        //             <Button variant="destructive">
+        //               <DeleteButton
+        //                 departmentId={department.id}
+        //                 departmentName={department.name}
+        //                 onDelete={handleDepartmentDelete}
+        //               />
+        //             </Button>
+        //           </TableCell>
+        //         </TableRow>
+        //       ))}
+        //   </TableBody>
+        // </Table>
         <div className="grid grid-cols-3 gap-4">
           {departments.length > 0 &&
             departments?.map((department) => (
@@ -116,8 +120,9 @@ const DepartmentsList = () => {
 
                 <CardFooter className="justify-between">
                   <CardDescription>
-                    Employees: {department.employee_list.length || 0}
+                    Employees: {department?.employee_count || 0}
                   </CardDescription>
+
                   <div className="flex gap-2">
                     <Button variant="outline" size="icon" asChild>
                       <Link to={`/edit-department/${department.id}`}>
@@ -126,7 +131,11 @@ const DepartmentsList = () => {
                     </Button>
 
                     <Button variant="destructive">
-                      <Trash />
+                      <DeleteButton
+                        departmentId={department.id}
+                        departmentName={department.name}
+                        onDelete={handleDepartmentDelete}
+                      />
                     </Button>
                   </div>
                 </CardFooter>
