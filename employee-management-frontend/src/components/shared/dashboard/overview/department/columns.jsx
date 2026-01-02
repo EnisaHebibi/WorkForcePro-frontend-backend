@@ -1,8 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Pencil, Trash } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/shared/dataTable/data-table-column-header";
+import { Link } from "react-router-dom";
+import DeleteButton from "./DeleteButton";
 
 export const columns = [
   {
@@ -40,6 +42,30 @@ export const columns = [
     header: () => <>Employees</>,
     cell: ({ row }) => {
       return <div>{row.getValue("employee_count")}</div>;
+    },
+  },
+  {
+    accessorKey: "id",
+    header: () => <>Actions</>,
+    cell: ({ row }) => {
+      const id = row.getValue("id");
+      const name = row.getValue("name");
+
+      return (
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" asChild>
+            <Link to={`/edit-department/${id}`}>
+              <Pencil />
+            </Link>
+          </Button>
+
+          <DeleteButton
+            departmentId={id}
+            departmentName={name}
+            onDelete={() => window.location.reload()}
+          />
+        </div>
+      );
     },
   },
 ];
