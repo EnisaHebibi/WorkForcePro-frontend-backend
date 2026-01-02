@@ -37,7 +37,8 @@ import {
 } from "@/components/ui/input-group";
 import { AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { da } from "zod/v4/locales";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   name: z
@@ -46,6 +47,9 @@ const formSchema = z.object({
 });
 
 const DepartmentCard = () => {
+  const { id } = useParams();
+  const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(true);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,10 +57,79 @@ const DepartmentCard = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-    toast.success("Succesfully✅");
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/departments/${id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (response.status === 404) {
+          setNotFound(true);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to load the department!");
+        }
+        const result = await response.json();
+        form.reset({ name: result.name });
+      } catch (error) {
+        toast.error("Error", { description: error.message });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDepartment();
+  }, [id]);
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/departments/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update the department");
+      }
+
+      const result = await response.json();
+      toast.success("Success", {
+        description: "Department updated successfully!",
+      });
+      form.reset({ name: result.name });
+    } catch (error) {
+      toast.error("Error", {
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (notFound) {
+    return (
+      <h1 className="text-red-500 text-center text-2xl">
+        Department not found!
+      </h1>
+    );
+  }
 
   return (
     <Card className={"lg:w-96 w-full"}>
@@ -92,7 +165,7 @@ const DepartmentCard = () => {
       </CardContent>
       <CardFooter>
         <Field orientation="horizontal">
-          <Button type="submit" form="department-form">
+          <Button type="submit" form="department-form" disabled={loading}>
             Submit
           </Button>
         </Field>
