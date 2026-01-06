@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 
-const EmployeesList = () => {
+const EmployeesList = ({ employees }) => {
   return (
     <Table>
       <TableHeader>
