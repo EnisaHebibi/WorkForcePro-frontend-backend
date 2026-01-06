@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@/reduxjs/toolkit";
+import reducer from "./authSlice";
 
 export const fetchEmployees = createAsyncThunk(
   "employees/fetchEmployees",
@@ -24,3 +25,31 @@ export const fetchEmployees = createAsyncThunk(
     }
   }
 );
+
+const employeesSlice = createSlice({
+  name: "employees",
+  initialState: {
+    data: [],
+    loading: false,
+    error: null,
+  },
+
+  reducers: {},
+  extraReducers: (builders) => {
+    builders
+      .addCase(fetchEmployees.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchEmployees.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchEmployees.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});
+
+export default employeesSlice.reducer;
