@@ -28,7 +28,13 @@ const EmployeesPage = () => {
       >
         <CreateEmployeeDialog />
       </Header>
-      <EmployeesList employees={employees} />
+      {loading ? (
+        <p className="text-center">Loading employees...</p>
+      ) : error ? (
+        <p className="text-center text-red-500">{error}</p>
+      ) : (
+        <EmployeesList employees={employees} />
+      )}
     </Layout>
   );
 };

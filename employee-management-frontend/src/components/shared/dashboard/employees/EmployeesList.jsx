@@ -6,8 +6,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React from "react";
+import { useDispatch } from "react-redux";
 
 const EmployeesList = ({ employees }) => {
+  const dispatch = useDispatch();
+
   return (
     <Table>
       <TableHeader>
