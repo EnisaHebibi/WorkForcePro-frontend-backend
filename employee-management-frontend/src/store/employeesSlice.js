@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@/reduxjs/toolkit";
-import reducer from "./authSlice";
+// import reducer from "./authSlice";
 
 export const fetchEmployees = createAsyncThunk(
   "employees/fetchEmployees",
