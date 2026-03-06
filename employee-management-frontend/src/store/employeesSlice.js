@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@/reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import reducer from "./authSlice";
 
 export const fetchEmployees = createAsyncThunk(
@@ -11,7 +11,7 @@ export const fetchEmployees = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -23,7 +23,7 @@ export const fetchEmployees = createAsyncThunk(
     } catch (error) {
       return rejectedWithValue(error.message);
     }
-  }
+  },
 );
 
 const employeesSlice = createSlice({
