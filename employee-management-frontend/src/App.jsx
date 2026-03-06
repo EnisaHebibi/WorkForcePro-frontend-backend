@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/auth/RegisterPage";
-import LoginPage from "./pages/auth/Loginpage";
+import LoginPage from "./pages/auth/LoginPage";
 import { Toaster } from "sonner";
 import OverviewPage from "./pages/dashboard/overview/OverviewPage";
 import EmployeesPage from "./pages/dashboard/employees/EmployeesPage";
