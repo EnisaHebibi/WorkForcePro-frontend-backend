@@ -21,7 +21,7 @@ const EditEmployeeStatus = ({ userId, currentStatus }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env}/api/employees/update-status`,
+        `${import.meta.env.VITE_API_URL}/api/employees/update-status`,
         {
           method: "PUT",
           headers: {
