@@ -47,7 +47,7 @@ const EditEmployeeStatus = ({ userId, currentStatus }) => {
       });
     } catch (error) {
       toast.error("Error", {
-        description: error.message || "Failed to update the status.",
+        description: error.message || "Failed to update the status!",
       });
     } finally {
       setLoading(false);
