@@ -33,7 +33,7 @@ const formSchema = z.object({
   username: z
     .string()
     .min(2, { error: "Department name must have at least 2 characters." }),
-  email: z.email({ error: "Please enter a valid email address" }),
+  email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
     .min(6, { error: "Password name must have at least 6 characters." }),
