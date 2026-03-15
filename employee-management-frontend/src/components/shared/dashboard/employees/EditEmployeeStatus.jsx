@@ -26,7 +26,7 @@ const EditEmployeeStatus = ({ userId, currentStatus }) => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")},`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify({
             user_id: userId,
@@ -64,7 +64,9 @@ const EditEmployeeStatus = ({ userId, currentStatus }) => {
       </SelectTrigger>
       <SelectContent>
         {loading ? (
-          <SelectItem>Loading</SelectItem>
+          <SelectItem value="loading" disabled>
+            Loading...
+          </SelectItem>
         ) : (
           statuses.map((status) => (
             <SelectItem key={status.value} value={status.value}>
@@ -78,5 +80,3 @@ const EditEmployeeStatus = ({ userId, currentStatus }) => {
 };
 
 export default EditEmployeeStatus;
-
-//minuta 41
