@@ -1,19 +1,19 @@
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const EditEmployeeDepartment = (
+const EditEmployeeDepartment = ({
   userId,
   currentDepartmentName,
   departments,
-  onDepartmentUpdated,
-) => {
+}) => {
   const [selectedDepartment, setSelectedDepartment] = useState(
     currentDepartmentName,
   );
@@ -57,7 +57,7 @@ const EditEmployeeDepartment = (
         throw new Error("Failed to update department.");
       }
       setSelectedDepartment(value);
-      onDepartmentUpdated(userId, newDepartmentId);
+
       const data = await response.json();
 
       toast.success("Success", { description: data.message });

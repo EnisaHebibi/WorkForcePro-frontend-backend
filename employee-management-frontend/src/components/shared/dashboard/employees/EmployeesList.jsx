@@ -28,9 +28,6 @@ const EmployeesList = ({ employees }) => {
     setUpdatedEmployees(employees);
   }, [employees]);
 
-  const handleDepartmentUpdated = () => {
-    console.log("department pdate");
-  };
   return (
     <Table>
       <TableHeader>
@@ -66,7 +63,6 @@ const EmployeesList = ({ employees }) => {
                     userId={employee.user_id}
                     currentDepartmentName={employee.department_name}
                     departments={departments}
-                    onDepartmentUpdated={handleDepartmentUpdated}
                   />
                 )}
               </TableCell>
