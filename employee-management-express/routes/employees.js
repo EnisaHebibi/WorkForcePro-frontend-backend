@@ -6,8 +6,38 @@ const router = express.Router();
 
 //Endpoint -get all users and their departments(or show "Unassigned")
 
+// router.get("/all-users", authMiddleware, async (req, res) => {
+//   try {
+//     const query = `
+//     SELECT
+//           u.id AS user_id,
+//           u.username AS user_name,
+//           u.email,
+//           u.status,
+//           COALESCE(d.name, 'Unassigned') AS department_name
+//           FROM users u
+//           LEFT JOIN users_departments ud ON u.id = ud.user_id
+//           LEFT JOIN departments d ON d.id = ud.department_id
+//           ORDER BY u.id ASC LIMIT 10;`;
+
+//     const result = await pool.query(query);
+
+//     res.status(200).json(result.rows);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 router.get("/all-users", authMiddleware, async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const countQuery = `SELECT COUNT (*) as total FROM users;`;
+    const countResult = await pool.query(countQuery);
+    const total = parseInt(countResult.rows[0].total);
+
     const query = `
     SELECT 
           u.id AS user_id,
@@ -18,11 +48,19 @@ router.get("/all-users", authMiddleware, async (req, res) => {
           FROM users u
           LEFT JOIN users_departments ud ON u.id = ud.user_id
           LEFT JOIN departments d ON d.id = ud.department_id
-          ORDER BY u.id ASC LIMIT 10;`;
+          ORDER BY u.id ASC LIMIT $1 OFFSET $2;`;
 
-    const result = await pool.query(query);
+    const result = await pool.query(query, [limit, offset]);
 
-    res.status(200).json(result.rows);
+    res.status(200).json({
+      data: result.rows,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
