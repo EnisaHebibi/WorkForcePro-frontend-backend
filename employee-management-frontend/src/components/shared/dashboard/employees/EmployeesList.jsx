@@ -10,6 +10,7 @@ import { fetchDepartments } from "@/store/departmentsSlice";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EditEmployeeStatus from "./EditEmployeeStatus";
+import EditEmployeeDepartment from "./EditEmployeeDepartment";
 
 const EmployeesList = ({ employees }) => {
   const dispatch = useDispatch();
@@ -27,6 +28,9 @@ const EmployeesList = ({ employees }) => {
     setUpdatedEmployees(employees);
   }, [employees]);
 
+  const handleDepartmentUpdated = () => {
+    console.log("department pdate");
+  };
   return (
     <Table>
       <TableHeader>
@@ -43,18 +47,29 @@ const EmployeesList = ({ employees }) => {
         {updatedEmployees.length < 0 ? (
           <TableCell colSpan="5">No Employees found</TableCell>
         ) : (
-          updatedEmployees.map((employees, index) => (
+          updatedEmployees.map((employee, index) => (
             <TableRow key={index}>
-              <TableCell>{employees.user_id}</TableCell>
-              <TableCell>{employees.user_name}</TableCell>
-              <TableCell>{employees.email}</TableCell>
+              <TableCell>{employee.user_id}</TableCell>
+              <TableCell>{employee.user_name}</TableCell>
+              <TableCell>{employee.email}</TableCell>
               <TableCell>
                 <EditEmployeeStatus
-                  userId={employees.user_id}
-                  currentStatus={employees.status}
+                  userId={employee.user_id}
+                  currentStatus={employee.status}
                 />
               </TableCell>
-              <TableCell>{employees.department_name}</TableCell>
+              <TableCell>
+                {loading && "Loading"}
+                {departments.length === 0 && "No departments"}
+                {!loading && !error && departments.length > 0 && (
+                  <EditEmployeeDepartment
+                    userId={employee.user_id}
+                    currentDepartmentName={employee.department_name}
+                    departments={departments}
+                    onDepartmentUpdated={handleDepartmentUpdated}
+                  />
+                )}
+              </TableCell>
             </TableRow>
           ))
         )}
