@@ -3,23 +3,39 @@ import Header from "../../../components/shared/dashboard/Header";
 import Layout from "../Layout";
 import EmployeesList from "@/components/shared/dashboard/employees/EmployeesList";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchEmployees } from "@/store/employeesSlice";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const EmployeesPage = () => {
   const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const {
     data: employees,
+    pagination,
     loading,
     error,
   } = useSelector((state) => state.employees);
 
   useEffect(() => {
-    dispatch(fetchEmployees()).catch((error) =>
-      toast.error("Error", { description: error })
+    dispatch(fetchEmployees({ page: currentPage, limit: pageSize })).catch(
+      (error) => toast.error("Error", { description: error }),
     );
-  }, [dispatch]);
+  }, [dispatch, currentPage, pageSize]);
+
+  const handleNextPage = () => {
+    if (currentPage < pagination.totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   return (
     <Layout>
       <Header
@@ -33,7 +49,47 @@ const EmployeesPage = () => {
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : (
-        <EmployeesList employees={employees} />
+        <>
+          <EmployeesList employees={employees} />
+          <div className="flex items-center justify-between mt-6 p-4">
+            <div className="text-sm text-gray-600">
+              Page {pagination.page} of {pagination.totalPages} | Total:
+              {pagination.total} employees
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="px-3 py-1 border border-gray-300 rounded text-sm"
+              >
+                <option value={10}>10 per page</option>
+                <option value={20}>20 per page</option>
+                <option value={50}>50 per page</option>
+                <option value={100}>100 per page</option>
+              </select>
+
+              <Button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                variant="outline"
+              >
+                Previous
+              </Button>
+
+              <Button
+                onClick={handleNextPage}
+                disabled={currentPage === pagination.totalPages}
+                variant="outline"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       )}
     </Layout>
   );
