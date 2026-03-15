@@ -34,7 +34,7 @@ router.get("/all-users", authMiddleware, async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const countQuery = `SELECT COUNT (*) as total FROM users;`;
+    const countQuery = `SELECT COUNT(*) AS total FROM users;`;
     const countResult = await pool.query(countQuery);
     const total = parseInt(countResult.rows[0].total);
 
@@ -136,13 +136,13 @@ router.put("/update-department", authMiddleware, async (req, res) => {
           .json({ message: "User or department not found!" });
       }
 
-      return res.status(201).json({
+      return res.status(200).json({
         message: "Department assigned successfully",
         data: result.rows[0],
       });
     }
 
-    res.status(201).json({
+    res.status(200).json({
       message: "Department assigned successfully",
       data: result.rows[0],
     });
@@ -163,7 +163,7 @@ router.put("/update-status", authMiddleware, async (req, res) => {
 
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({
-        message: "Invalid status. Allowed values:'admin', 'employees'.",
+        message: "Invalid status. Allowed values:'admin', 'employee'.",
       });
     }
 

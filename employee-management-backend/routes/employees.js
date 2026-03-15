@@ -44,7 +44,7 @@ module.exports = function (server) {
       response.status(201).json(departmentsData[index]);
     } else {
       const employeeIndex = department.employee_list.findIndex(
-        (empl) => empl.id === requestBody.id
+        (empl) => empl.id === requestBody.id,
       );
 
       if (employeeIndex === -1) {
@@ -83,7 +83,7 @@ module.exports = function (server) {
       return response.status(404).json({ message: "Department not found" });
     } else {
       const departmentEmployees = department.employee_list;
-      response.status(201).json({
+      response.status(200).json({
         total: departmentEmployees.length,
         employees: departmentEmployees,
       });
@@ -102,11 +102,11 @@ module.exports = function (server) {
       return response.status(404).json({ message: "Department not found!" });
     } else {
       const employee = department.employee_list.find(
-        (emp) => emp.id === employeeId
+        (emp) => emp.id === employeeId,
       );
 
       return employee
-        ? response.status(201).json(employee)
+        ? response.status(200).json(employee)
         : response.status(404).json({ message: "Employee not found" });
     }
   });
@@ -121,11 +121,11 @@ module.exports = function (server) {
 
     departmentsData.forEach((department) => {
       const employeeIndex = department.employee_list.findIndex(
-        (empl) => empl.id === employeeId
+        (empl) => empl.id === employeeId,
       );
 
       if (employeeIndex !== -1) {
-        department = department.employee_list.splice(employeeIndex, 1);
+        department.employee_list.splice(employeeIndex, 1);
         employeeDeleted = true;
       }
     });
